@@ -46,8 +46,6 @@ object Server {
 
   val authedRoutes: AuthedRoutes[User,IO] =
     AuthedRoutes.of {
-      /*case GET -> Root / "BudgetCatsWithUser" as user =>
-        Ok(findBudgetCategoryWithUser(user).asJson)*/
       case GET -> Root / "BudgetsWithUser" as user =>
         Ok(findBudgetWithUSer(user).asJson)
     }
@@ -86,27 +84,7 @@ object Server {
       case DELETE -> Root/ "budgetDelete" / id =>
         Ok(DomHandler.deleteBudget(id.toLong))
     }
-  /*val httpBudgetCategoryRoutes: HttpRoutes[IO] =
-    HttpRoutes.of[IO]{
-      case GET -> Root/ "budgetCategory" / id =>
-        Ok(findBudgetCategory(id))
-      case request @ POST -> Root/ "budgedCatReq" =>
-        System.out.println(request)
-        val req = request.as[BudgetCategory].unsafeRunSync()
-        System.out.println(req)
-        val res = Await.result(DomHandler.createBudgetCategory(req), Duration(1000, TimeUnit.MILLISECONDS))
-        System.out.println(res)
-        Ok(res.asJson)
-      case request @ PUT -> Root/ "budgedCatReqPut" =>
-        System.out.println(request)
-        val req = request.as[BudgetCategory].unsafeRunSync()
-        System.out.println(req)
-        val res = Await.result(DomHandler.updateBudgetCategory(req), Duration(1000, TimeUnit.MILLISECONDS))
-        System.out.println(res)
-        Ok(res.asJson)
-      case DELETE -> Root/ "budgetCategoryDelete" / id =>
-        Ok(DomHandler.deleteBudgetCategory(id.toLong))
-    }*/
+
 
   val httpExpenseRoutes: HttpRoutes[IO] =
     HttpRoutes.of[IO]{
@@ -179,16 +157,7 @@ object Server {
     val magicUser: List[FullBudget] = Await.result(DomHandler.filterBudgetsWithUser(user), maxWaitTime)
     magicUser
   }
-  /*def findBudgetCategory(id: String): FullBudgetCategory = {
-    val maxWaitTime: FiniteDuration = Duration(5, TimeUnit.SECONDS)
-    val magicUser: FullBudgetCategory = Await.result(DomHandler.filterBudgetCategory(id.toLong), maxWaitTime)
-    magicUser
-  }
-  def findBudgetCategoryWithUser(user:User): List[FullBudgetCategory] = {
-    val maxWaitTime: FiniteDuration = Duration(5, TimeUnit.SECONDS)
-    val magicUser: List[FullBudgetCategory] = Await.result(DomHandler.filterBudgetCategoryWithUser(user), maxWaitTime)
-    magicUser
-  }*/
+
   def findExpense(id: String): FullExpense = {
     val maxWaitTime: FiniteDuration = Duration(5, TimeUnit.SECONDS)
     val magicUser: FullExpense = Await.result(DomHandler.filterExpense(id.toLong), maxWaitTime)

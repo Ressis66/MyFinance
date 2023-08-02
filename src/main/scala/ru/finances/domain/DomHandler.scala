@@ -19,8 +19,6 @@ object DomHandler {
                      amount: BigDecimal,
                      description: String,
                      usID: Long
-                     /*lineItems: List[LineItem],
-                     user: User*/
                    )
 
 
@@ -29,60 +27,41 @@ object DomHandler {
                          title: String,
                          amount: BigDecimal,
                          description: String,
-                         /*usID: */
                          lineItems: List[LineItem],
                          user: User
                        )
 
 
-  /*case class BudgetCategory(id: Long,
-                            name: String,
-                            usID: Long
-                            /* user: User*/
-                           )
-
-  case class FullBudgetCategory(id: Long,
-                                name: String,
-                                /*usID: Long*/
-                                user: User
-                               )*/
-
   case class Expense(id: Long,
                      amount: Long,
                      description: String,
                      linID: Long
-                     /*lineItem: LineItem*/
                     )
 
   case class FullExpense(id: Long,
                          amount: Long,
                          description: String,
-                         /*linID: Long*/
                          lineItem: LineItem
                         )
 
   case class LineItem(id: Long,
                       budgetCategory: String,
-                      /*budgetCategory: BudgetCategory,*/
                       projectedAmount: Long,
                       totalAmountSpent: Long,
                       budID: Long
-                      /*expenses: List[Expense],
-                       budget: Budget*/)
+                     )
 
   case class FullLineItem(id: Long,
                           budgetCategory: String,
                           projectedAmount: Long,
                           totalAmountSpent: Long,
-                          /*budID: Long,*/
                           expenses: List[Expense],
-                          budget: Budget)
+                          budget: Budget
+                         )
 
   case class User(
                    id: Long,
                    name: String
-                   /*categories: List[BudgetCategory],
-                   budgets: List[Budget]*/
                  )
 
 
@@ -105,20 +84,6 @@ object DomHandler {
 
   val budgets = TableQuery[Budgets]
 
-  /*class BudgetCategories(tag: Tag) extends Table[BudgetCategory](tag,Some("budgets"), "BudgetCategories") {
-    def id: Rep[Long] = column[Long]("id", O.PrimaryKey)
-
-    def name = column[String]("name")
-
-    def usID = column[Long]("US_ID")
-
-    override def * = (id, name, usID) <> (BudgetCategory.tupled, BudgetCategory.unapply)
-
-    def user: ForeignKeyQuery[Users, User] = foreignKey("US_FK", usID, users)(_.id, onUpdate = ForeignKeyAction.Restrict, onDelete = ForeignKeyAction.Cascade)
-
-  }
-
-  val budgetsCategories = TableQuery[BudgetCategories]*/
 
   class Expenses(tag: Tag) extends Table[Expense](tag,Some("budgets"), "Expenses") {
     def id = column[Long]("id", O.PrimaryKey)
@@ -258,49 +223,6 @@ object DomHandler {
     db.run(budgets.filter(_.id === id).delete)
   }
 
-  /*def filterBudgetCategory(id: Long) = {
-    val query = for {
-      (budgetCategory, user) <- budgetsCategories joinLeft users on (_.usID === _.id)
-    } yield (budgetCategory, user)
-    db.run(query.result).map { row =>
-      row.map { r =>
-        val id = r._1.id
-        val name = r._1.name
-        val user = r._2.head
-        FullBudgetCategory(id, name, user)
-      }.toList.filter(_.id == id).head
-    }
-  }
-
- def filterBudgetCategoryWithUser(user:User) = {
-   val query = for {
-     (budgetCategory, user) <- budgetsCategories joinLeft users on (_.usID === _.id)
-   } yield (budgetCategory, user)
-   db.run(query.result).map { row =>
-     row.map { r =>
-       val id = r._1.id
-       val name = r._1.name
-       val user = r._2.head
-       FullBudgetCategory(id, name, user)
-     }.toList.filter(_.user == user)
-   }
- }
-  def createBudgetCategory(budgetCategory: BudgetCategory): Future[Int]= {
-    val queryDescription = budgetsCategories += budgetCategory
-    db.run(queryDescription)
-
-
-  }
-
-  def updateBudgetCategory(budgetCategory: BudgetCategory) = {
-    val updatedBudgetCategory = BudgetCategory(budgetCategory.id, budgetCategory.name, budgetCategory.usID)
-    db.run(budgetsCategories.insertOrUpdate(updatedBudgetCategory))
-  }
-
-  def deleteBudgetCategory(id: Long) = {
-    db.run(budgetsCategories.filter(_.id === id).delete)
-  }
-*/
   def filterLineItem(id: Long) = {
     val query = for {
       ((lineItem, budget), expenses)<- linItems joinLeft budgets on (_.budID === _.id)  joinLeft expenses on (_._1.id===_.linID)
